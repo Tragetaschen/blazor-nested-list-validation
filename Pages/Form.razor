@@ -1,0 +1,47 @@
+﻿@page "/form"
+
+<EditForm Model=model OnValidSubmit="ValidSubmit" OnInvalidSubmit="InvalidSubmit">
+    <div>
+        <button type="submit">Submit</button>
+        <button type="button" @onclick=Add>Add</button>
+        <span>Valid submit: @validSubmit</span>
+    </div>
+    <ObjectGraphDataAnnotationsValidator />
+    <ValidationSummary />
+
+    @foreach (var child in model.Children)
+    {
+        <hr />
+        @* I can reference child properties*@
+        <ValidationMessage For="()=>child.Required" />
+        @* I cannot reference validation errors for an individual child model*@
+        <ValidationMessage For="()=>child" />
+        <div>
+            <span>Name: <InputText @bind-Value="child.Name" /></span>
+            <span>Alt: <InputText @bind-Value="child.AlternativeName" /></span>
+            <span>Req: <InputText @bind-Value=child.Required /></span>
+        </div>
+    }
+    <hr />
+</EditForm>
+
+@code
+{
+    ParentModel model = new();
+    bool? validSubmit;
+
+    void Add()
+    {
+        model.Children.Add(new());
+    }
+
+    void ValidSubmit()
+    {
+        validSubmit = true;
+    }
+
+    void InvalidSubmit()
+    {
+        validSubmit = false;
+    }
+}
